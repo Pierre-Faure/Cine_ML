@@ -41,10 +41,32 @@ def save_to_db(data, filename):
 
     if data['Year'] != 'N/A':
         year = int(data['Year'])
+    else:
+        year = -1
+    if data['Rated'] != 'N/A':
+        rated = data['Rated']
+    else:
+        rated = 'N/A'
+    if data['Released'] != 'N/A':
+        released = data['Released']
+    else:
+        released = 'N/A'
     if data['Runtime'] != 'N/A':
         runtime = int(data['Runtime'].split()[0])
+    else:
+        runtime = -1
     if data['Country'] != 'N/A':
         country = data['Country']
+    else:
+        country = 'N/A'
+    if data['Genre'] != 'N/A':
+        genre = data['Genre']
+    else:
+        genre = 'N/A'
+    if data['Awards'] != 'N/A':
+        awards = data['Awards']
+    else:
+        awards = 'N/A'
     if data['Metascore'] != 'N/A':
         metascore = float(data['Metascore'])
     else:
@@ -55,14 +77,23 @@ def save_to_db(data, filename):
         imdb_rating = -1
 
     cur.execute('''CREATE TABLE IF NOT EXISTS movie 
-    (Title TEXT, Year INTEGER, Runtime INTEGER, Country TEXT, Metascore REAL, IMDBRating REAL)''')
+    (Title TEXT, Year INTEGER, Rated TEXT, Released TEXT, Runtime INTEGER, Country TEXT, Genre TEXT, Awards TEXT, Metascore REAL, IMDBRating REAL)''')
 
     cur.execute('SELECT Title FROM movie WHERE Title = ? ', (title,))
     row = cur.fetchone()
 
     if row is None:
-        cur.execute('''INSERT INTO movie (Title, Year, Runtime, Country, Metascore, IMDBRating)
-                VALUES (?,?,?,?,?,?)''', (title, year, runtime, country, metascore, imdb_rating))
+        cur.execute('''INSERT INTO movie (Title, Year, Rated, Released, Runtime, Country, Genre, Awards, Metascore, IMDBRating)
+                VALUES (?,?,?,?,?,?,?,?,?,?)''', (title,
+                                                  year,
+                                                  rated,
+                                                  released,
+                                                  runtime,
+                                                  country,
+                                                  genre,
+                                                  awards,
+                                                  metascore,
+                                                  imdb_rating))
     else:
         print("Record already found. No update made.")
 
