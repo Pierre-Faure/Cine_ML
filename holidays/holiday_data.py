@@ -4,7 +4,7 @@ from jours_feries_france import JoursFeries
 
 def get_holidays(input_file):
     """
-    get a dataframe containing the dates of metropolitan french school holidays and civil holidays
+    get a dataframe containing the dates of metropolitan french school holidays and civil bank holidays
     :param input_file: (str) raw data path
     :return:
     """

@@ -33,11 +33,11 @@ def get_movie_details(title, date=""):
     return data
 
 
-def save_to_db(data, filename):
+def save_to_db(data, title, filename):
     conn = sqlite3.connect(str(filename))
     cur = conn.cursor()
 
-    title = data['Title']
+    full_title = data['Title']
 
     if data['Year'] != 'N/A':
         year = int(data['Year'])
@@ -77,25 +77,33 @@ def save_to_db(data, filename):
         imdb_rating = -1
 
     cur.execute('''CREATE TABLE IF NOT EXISTS movie 
-    (Title TEXT, Year INTEGER, Rated TEXT, Released TEXT, Runtime INTEGER, Country TEXT, Genre TEXT, Awards TEXT, Metascore REAL, IMDBRating REAL)''')
+    (Title TEXT, FullTitle TEXT,  Year INTEGER, Rated TEXT, Released TEXT, Runtime INTEGER, Country TEXT, Genre TEXT, Awards TEXT, Metascore REAL, IMDBRating REAL)''')
 
     cur.execute('SELECT Title FROM movie WHERE Title = ? ', (title,))
     row = cur.fetchone()
 
     if row is None:
-        cur.execute('''INSERT INTO movie (Title, Year, Rated, Released, Runtime, Country, Genre, Awards, Metascore, IMDBRating)
-                VALUES (?,?,?,?,?,?,?,?,?,?)''', (title,
-                                                  year,
-                                                  rated,
-                                                  released,
-                                                  runtime,
-                                                  country,
-                                                  genre,
-                                                  awards,
-                                                  metascore,
-                                                  imdb_rating))
+        cur.execute('''INSERT INTO movie (Title, FullTitle, Year, Rated, Released, Runtime, Country, Genre, Awards, Metascore, IMDBRating)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)''', (title,
+                                                    full_title,
+                                                    year,
+                                                    rated,
+                                                    released,
+                                                    runtime,
+                                                    country,
+                                                    genre,
+                                                    awards,
+                                                    metascore,
+                                                    imdb_rating))
     else:
         print("Record already found. No update made.")
 
     conn.commit()
     conn.close()
+
+
+def add_new_movie(title, db_file, date=""):
+    try:
+        save_to_db(get_movie_details(title, date), title, db_file)
+    except:
+        print("No movie added")
