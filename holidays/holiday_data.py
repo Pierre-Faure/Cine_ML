@@ -1,6 +1,9 @@
 import pandas as pd
 from jours_feries_france import JoursFeries
 
+holidays_file = 'data/holidays/feries_vacances.csv'
+vacances_file = 'data/holidays/vacances_scolaires.csv'
+
 
 def get_holidays(input_file):
     """
@@ -18,5 +21,20 @@ def create_holidays_csv(df, output_file):
     df.to_csv(output_file, index=False)
 
 
+def update_holidays():
+    try:
+        create_holidays_csv(get_holidays(vacances_file), holidays_file)
+        print('Holidays data updated successfully.')
+    except:
+        print('Updating holidays raised an error.')
+
+
+def daily_holidays(year, month, day, holiday_file=holidays_file):
+    df = pd.read_csv(holiday_file)
+    df['date'] = pd.to_datetime(df['date'])
+
+    return df[df['date'] == str(year) + '-' + str(month) + '-' + str(day)]
+
+
 if __name__ == "__main__":
-    create_holidays_csv(get_holidays('../data/holidays/vacances_scolaires.csv'), '../data/holidays/feries_vacances.csv')
+    pass
