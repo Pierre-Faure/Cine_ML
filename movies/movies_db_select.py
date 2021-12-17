@@ -22,6 +22,5 @@ def select_movie_by_title(title):
         print('Movie added.')
         select_movie_by_title(title)
     else:
-        print(rows[0])
         df = pd.read_sql_query("SELECT * FROM movie WHERE Title==\'"+title+"\'", conn)
         return df

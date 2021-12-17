@@ -29,8 +29,8 @@ def update_holidays():
         print('Updating holidays raised an error.')
 
 
-def daily_holidays(year, month, day, holiday_file=holidays_file):
-    df = pd.read_csv(holiday_file)
+def daily_holidays(year, month, day):
+    df = pd.read_csv(holidays_file)
     df['date'] = pd.to_datetime(df['date'])
 
     return df[df['date'] == str(year) + '-' + str(month) + '-' + str(day)]
