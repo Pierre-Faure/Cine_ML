@@ -35,3 +35,6 @@ def create_dataset():
     new_df['Released'] = pd.to_datetime(new_df['Released'])
     return new_df
 
+
+def create_data_csv(df):
+    df.to_csv(output_file, index=False)
