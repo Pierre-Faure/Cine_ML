@@ -11,3 +11,9 @@ ____________
 ## Additional tools
 
 - Jours-feries-france: a package to get french holidays [Github page](https://github.com/etalab/jours-feries-france)
+
+## Goals of the project
+
+Cinema employees and managers often know intuitively the aproximative number of spectators that could come to see a movie.
+This guess is baased on experience, knowledge of the public habits or indications from distributors for example.
+

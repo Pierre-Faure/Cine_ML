@@ -9,7 +9,7 @@ def get_holidays(input_file):
     """
     get a dataframe containing the dates of metropolitan french school holidays and civil bank holidays
     :param input_file: (str) raw data path
-    :return:
+    :return: pandas dataframe
     """
     df = pd.read_csv(input_file)
     df['date'] = pd.to_datetime(df['date'])
@@ -18,10 +18,20 @@ def get_holidays(input_file):
 
 
 def create_holidays_csv(df, output_file):
+    """
+    Function to save dataframe to csv file
+    :param df: pandas dataframe
+    :param output_file: path to csv file
+    :return:
+    """
     df.to_csv(output_file, index=False)
 
 
 def update_holidays():
+    """
+    Function that update the holidays csv file
+    :return:
+    """
     try:
         create_holidays_csv(get_holidays(vacances_file), holidays_file)
         print('Holidays data updated successfully.')

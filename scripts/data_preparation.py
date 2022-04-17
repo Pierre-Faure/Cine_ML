@@ -10,6 +10,11 @@ holidays_data = 'data/holidays/feries_vacances.csv'
 
 
 def create_dataset():
+    """
+    This function uses scripts from the packages 'holidays', 'movies' and 'weather' AND cinema data to create a complete
+    dataframe that will be used in further steps
+    :return: pandas dataframe
+    """
     df = pd.read_csv(input_file, sep=";")
     df['date'] = pd.to_datetime(df['date'])
     new_df = pd.DataFrame()
