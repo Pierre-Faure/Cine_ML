@@ -1,6 +1,7 @@
 import pandas as pd
 import camelot
 import os
+import numpy as np
 
 path = os.getcwd()
 pdf_dir = os.path.join(path, 'data', 'data_cine_pdf')
@@ -44,3 +45,10 @@ df_cleaned = df_cleaned.rename(columns={"Spect. \nPayants": "Payants",
                            "Taux \nremplissage": "Taux remplissage"})
 
 df_cleaned.to_csv('data/clean_data.csv', index=False)
+
+# traitement de la premiere colonne
+df_cleaned['date'] = np.where(df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$"), df_cleaned['Salle'], np.NaN)
+df_cleaned['time'] = np.where(df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"), df_cleaned['Salle'], np.NaN)
+df_cleaned['date'] = df_cleaned['date'].fillna(method='ffill')
+df_cleaned['time'] = df_cleaned['time'].fillna(method='ffill')
+df_cleaned = df_cleaned.loc[~((df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$")) | (df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"))),:]
