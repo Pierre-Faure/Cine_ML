@@ -28,27 +28,32 @@ def create_raw_csv():
     df.to_csv('data/raw_data/df_raw.csv', index=False)
 
 
-dfraw = pd.read_csv(raw_data_path)
+def data_cleaning():
+    dfraw = pd.read_csv(raw_data_path)
 
-df_cleaned = dfraw.drop([
-    'Résa non \nvalidées',
-    'Recette',
-    'En \ncaisse',
-    'En \nborne',
-    'Sur \ninternet',
-    'Aff \ncomplet',
-    'Accès'
-], axis=1)
+    df_cleaned = dfraw.drop([
+        'Résa non \nvalidées',
+        'Recette',
+        'En \ncaisse',
+        'En \nborne',
+        'Sur \ninternet',
+        'Aff \ncomplet',
+        'Accès'
+    ], axis=1)
 
-df_cleaned = df_cleaned.rename(columns={"Spect. \nPayants": "Payants",
-                           "Places \nlibres": "Places libres",
-                           "Taux \nremplissage": "Taux remplissage"})
+    df_cleaned = df_cleaned.rename(columns={"Spect. \nPayants": "Payants",
+                                            "Places \nlibres": "Places libres",
+                                            "Taux \nremplissage": "Taux remplissage"})
 
-df_cleaned.to_csv('data/clean_data.csv', index=False)
+    # traitement de la premiere colonne
+    df_cleaned['date'] = np.where(df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$"),
+                                  df_cleaned['Salle'], np.NaN)
+    df_cleaned['time'] = np.where(df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"),
+                                  df_cleaned['Salle'],
+                                  np.NaN)
+    df_cleaned['date'] = df_cleaned['date'].fillna(method='ffill')
+    df_cleaned['time'] = df_cleaned['time'].fillna(method='ffill')
+    df_cleaned = df_cleaned.loc[~((df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$")) | (
+        df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"))), :]
 
-# traitement de la premiere colonne
-df_cleaned['date'] = np.where(df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$"), df_cleaned['Salle'], np.NaN)
-df_cleaned['time'] = np.where(df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"), df_cleaned['Salle'], np.NaN)
-df_cleaned['date'] = df_cleaned['date'].fillna(method='ffill')
-df_cleaned['time'] = df_cleaned['time'].fillna(method='ffill')
-df_cleaned = df_cleaned.loc[~((df_cleaned['Salle'].str.match("^[0-9]{1,2}\\/[0-9]{1,2}\\/[0-9]{4}$")) | (df_cleaned['Salle'].str.match("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"))),:]
+    df_cleaned.to_csv('data/clean_data.csv', index=False)
