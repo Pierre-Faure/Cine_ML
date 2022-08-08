@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /movies/secrets.py
 /data/data_cine_pdf/
+/data/raw_data/df_raw.csv
