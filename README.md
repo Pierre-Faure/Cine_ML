@@ -11,13 +11,14 @@ ____________
 ## Additional tools
 
 - Jours-feries-france: a package to get french holidays [Github page](https://github.com/etalab/jours-feries-france)
+- Facebook Prophet : time series forecasting and analysis  [Prophet](https://facebook.github.io/prophet/)
 
 ## Goals of the project
 
 Cinema employees and managers often know intuitively the aproximative number of spectators that could come to see a movie.
 This guess is baased on experience, knowledge of the public habits or indications from distributors for example.
 
-## Ideas
+## Idea backlog
 
 - Add Google trends data about movies (capture "hype")
 - Add data from AlloCine such as average note, number of reviews, reviews average sentiment (sentiment analysis)
