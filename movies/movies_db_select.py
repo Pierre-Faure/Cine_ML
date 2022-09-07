@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlite3
 from movies.imdb import add_new_movie
+import sys
 
 movies_db = 'data/movies.sqlite'
 
@@ -17,10 +18,13 @@ def select_movie_by_title(title):
     rows = query.fetchall()
 
     if len(rows) == 0:
-        print('No results in database. Adding entry.')
-        add_new_movie(title, movies_db)
-        print('Movie added.')
-        select_movie_by_title(title)
+        try:
+            print("["+title+"]: No results in database. Adding entry.")
+            add_new_movie(title, movies_db)
+            print("["+title+"]: Movie added.")
+            select_movie_by_title(title)
+        except:
+            print("["+title+"]: Error when adding the movie: " + str(sys.exc_info()[0]))
     else:
-        df = pd.read_sql_query("SELECT * FROM movie WHERE Title==\'"+title+"\'", conn)
+        df = pd.read_sql_query("SELECT * FROM movie WHERE Title==\'" + title + "\'", conn)
         return df

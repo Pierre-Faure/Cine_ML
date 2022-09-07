@@ -16,7 +16,7 @@ def create_dataset():
     :return: pandas dataframe
     """
     #df = pd.read_csv(input_file, sep=";")
-    df = pd.read_csv(input_file, parse_dates=[['date', 'time']], dayfirst=True)
+    df = pd.read_csv(input_file, parse_dates=[['date', 'time']], dayfirst=True, encoding='utf-8')
     df['date_time'] = pd.to_datetime(df['date_time'])
     new_df = pd.DataFrame()
     for idx, row in df.iterrows():

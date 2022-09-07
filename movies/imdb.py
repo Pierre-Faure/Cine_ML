@@ -6,6 +6,7 @@ import sys
 
 IMDB_API_SECRET = secrets.get('IMDB_API_KEY')
 OMDB_API_SECRET = secrets.get('OMDB_API_KEY')
+PROXIES = secrets.get('proxies')
 
 
 def get_movie_id(title, date=""):
@@ -19,9 +20,14 @@ def get_movie_id(title, date=""):
     payload = {}
     headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
     data = json.loads(response.text)
-    return data['results'][0]['id']
+    if data['errorMessage'] != '':
+        print('Error from API: '+data['errorMessage'])
+        print('Quitting...')
+        pass
+    else:
+        return data['results'][0]['id']
 
 
 def get_movie_details(title, date=""):
@@ -29,8 +35,36 @@ def get_movie_details(title, date=""):
     payload = {}
     headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
     data = json.loads(response.text)
+
+    # handling unidentified movies
+    if data['Response'] != 'True':
+        data = {'Title': title,
+                'Year': 'N/A',
+                'Rated': 'N/A',
+                'Released': 'N/A',
+                'Runtime': 'N/A',
+                'Genre': 'N/A',
+                'Director': 'N/A',
+                'Writer': 'N/A',
+                'Actors': 'N/A',
+                'Plot': 'N/A',
+                'Language': 'N/A',
+                'Country': 'N/A',
+                'Awards': 'N/A',
+                'Poster': 'N/A',
+                'Ratings': 'N/A',
+                'Metascore': 'N/A',
+                'imdbRating': 'N/A',
+                'imdbVotes': 'N/A',
+                'imdbID': 'N/A',
+                'Type': 'N/A',
+                'DVD': 'N/A',
+                'BoxOffice': 'N/A',
+                'Production': 'N/A',
+                'Website': 'N/A',
+                'Response': 'N/A'}
     return data
 
 
@@ -97,7 +131,7 @@ def save_to_db(data, title, filename):
                                                     metascore,
                                                     imdb_rating))
     else:
-        print("Record already found. No update made.")
+        print("["+title+"]: Record already found. No update made.")
 
     conn.commit()
     conn.close()
@@ -107,4 +141,4 @@ def add_new_movie(title, db_file, date=""):
     try:
         save_to_db(get_movie_details(title, date), title, db_file)
     except:
-        print("No movie added" + str(sys.exc_info()[0]))
+        print("["+title+"]: Movie not added" + str(sys.exc_info()[0]))
