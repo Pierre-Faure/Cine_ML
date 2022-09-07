@@ -2,6 +2,7 @@ import requests
 import json
 import sqlite3
 from movies.secrets import secrets
+import sys
 
 IMDB_API_SECRET = secrets.get('IMDB_API_KEY')
 OMDB_API_SECRET = secrets.get('OMDB_API_KEY')
@@ -106,4 +107,4 @@ def add_new_movie(title, db_file, date=""):
     try:
         save_to_db(get_movie_details(title, date), title, db_file)
     except:
-        print("No movie added")
+        print("No movie added" + str(sys.exc_info()[0]))

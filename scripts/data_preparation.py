@@ -3,8 +3,8 @@ from movies.movies_db_select import select_movie_by_title
 from weather.weather_scrapping import daily_weather
 from holidays.holiday_data import daily_holidays
 
-input_file = 'data_test/seances.csv'
-output_file = 'data_test/df_test.csv'
+input_file = 'data/clean_data.csv'
+output_file = 'data/complete_data/complete_df.csv'
 movies_db_file = 'data/movies.sqlite'
 holidays_data = 'data/holidays/feries_vacances.csv'
 
@@ -15,16 +15,17 @@ def create_dataset():
     dataframe that will be used in further steps
     :return: pandas dataframe
     """
-    df = pd.read_csv(input_file, sep=";")
-    df['date'] = pd.to_datetime(df['date'])
+    #df = pd.read_csv(input_file, sep=";")
+    df = pd.read_csv(input_file, parse_dates=[['date', 'time']], dayfirst=True)
+    df['date_time'] = pd.to_datetime(df['date_time'])
     new_df = pd.DataFrame()
     for idx, row in df.iterrows():
-        year = str(row['date'].year)
-        month = f"{row['date']:%m}"
-        day = f"{row['date']:%d}"
+        year = str(row['date_time'].year)
+        month = f"{row['date_time']:%m}"
+        day = f"{row['date_time']:%d}"
 
         # adding movie data
-        row = row.append(select_movie_by_title(row['film']).drop(columns=['Title']).iloc[0])
+        row = row.append(select_movie_by_title(row['Film']).drop(columns=['Title']).iloc[0])
 
         # adding weather data
         row = row.append(daily_weather(year, month, day).iloc[0])
