@@ -74,39 +74,39 @@ def save_to_db(data, title, filename):
 
     full_title = data['Title']
 
-    if data['Year'] != 'N/A':
+    if (data['Year'] != 'N/A') & (isinstance(data['Year'], int)):
         year = int(data['Year'])
     else:
         year = -1
-    if data['Rated'] != 'N/A':
+    if (data['Rated'] != 'N/A') & (isinstance(data['Rated'], str)):
         rated = data['Rated']
     else:
         rated = 'N/A'
-    if data['Released'] != 'N/A':
+    if (data['Released'] != 'N/A') & (isinstance(data['Released'], str)):
         released = data['Released']
     else:
         released = 'N/A'
-    if data['Runtime'] != 'N/A':
+    if (data['Runtime'] != 'N/A') & (isinstance(data['Runtime'], int)):
         runtime = int(data['Runtime'].split()[0])
     else:
         runtime = -1
-    if data['Country'] != 'N/A':
+    if (data['Country'] != 'N/A') & (isinstance(data['Country'], str)):
         country = data['Country']
     else:
         country = 'N/A'
-    if data['Genre'] != 'N/A':
+    if (data['Genre'] != 'N/A') & (isinstance(data['Genre'], str)):
         genre = data['Genre']
     else:
         genre = 'N/A'
-    if data['Awards'] != 'N/A':
+    if (data['Awards'] != 'N/A') & (isinstance(data['Awards'], str)):
         awards = data['Awards']
     else:
         awards = 'N/A'
-    if data['Metascore'] != 'N/A':
+    if (data['Metascore'] != 'N/A') & (isinstance(data['Metascore'], float)):
         metascore = float(data['Metascore'])
     else:
         metascore = -1
-    if data['imdbRating'] != 'N/A':
+    if (data['imdbRating'] != 'N/A') & (isinstance(data['imdbRating'], float)):
         imdb_rating = float(data['imdbRating'])
     else:
         imdb_rating = -1
