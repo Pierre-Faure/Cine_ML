@@ -23,22 +23,29 @@ def get_movie_id(title, date=""):
     response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
     data = json.loads(response.text)
     if data['errorMessage'] != '':
-        print('Error from API: '+data['errorMessage'])
+        print('Error from API: ' + data['errorMessage'])
         print('Quitting...')
-        pass
+        return
+    elif not data["results"]:
+        return -1
     else:
         return data['results'][0]['id']
 
 
 def get_movie_details(title, date=""):
-    url = "http://www.omdbapi.com/?apikey=" + OMDB_API_SECRET + "&r=json&i=" + get_movie_id(title, date)
-    payload = {}
-    headers = {}
+    # Fetching movie id
+    movie_id = get_movie_id(title, date)
+    if movie_id == -1:
+        data = {'Response': 'False'}
+    else:
+        url = "http://www.omdbapi.com/?apikey=" + OMDB_API_SECRET + "&r=json&i=" + movie_id
+        payload = {}
+        headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
-    data = json.loads(response.text)
+        response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
+        data = json.loads(response.text)
 
-    # handling unidentified movies
+    # Handling unidentified movies
     if data['Response'] != 'True':
         data = {'Title': title,
                 'Year': 'N/A',
@@ -130,8 +137,6 @@ def save_to_db(data, title, filename):
                                                     awards,
                                                     metascore,
                                                     imdb_rating))
-    else:
-        print("["+title+"]: Record already found. No update made.")
 
     conn.commit()
     conn.close()
@@ -141,4 +146,5 @@ def add_new_movie(title, db_file, date=""):
     try:
         save_to_db(get_movie_details(title, date), title, db_file)
     except:
-        print("["+title+"]: Movie not added" + str(sys.exc_info()[0]))
+        print("[" + title + "]: Movie not added" + str(sys.exc_info()[0]))
+        return
