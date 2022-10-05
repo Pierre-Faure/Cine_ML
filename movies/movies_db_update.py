@@ -11,15 +11,23 @@ def db_update(input_file, db_file):
     conn = sqlite3.connect(str(db_file))
     cur = conn.cursor()
 
-    for movie in df['Film'].unique():
-        # Movie exists in db ?
-        cur.execute('SELECT Title FROM movie WHERE Title = ? ', (movie,))
-        row = cur.fetchone()
+    # for movie in df['Film'].unique():
+    #     # Movie exists in db ?
+    #     cur.execute('SELECT Title FROM movie WHERE Title = ? ', (movie,))
+    #     row = cur.fetchone()
+    #
+    #     if row is None:
+    #         add_new_movie(movie, db_file)
+    #     else:
+    #         print("[" + movie + "]: Record already in base. No update made.")
 
-        if row is None:
-            add_new_movie(movie, db_file)
-        else:
-            print("[" + movie + "]: Record already in base. No update made.")
+    # Optimised way to fetch missing movies
+    movies_in_db = list(pd.read_sql_query("SELECT * FROM movie", conn)['Title'].unique())
+    movies_to_fetch = list(set(df['Film'].unique()) - set(movies_in_db))
+
+    for missing_movie in movies_to_fetch:
+        add_new_movie(missing_movie, db_file)
+
     print('Movies data updated successfully.')
 
 
