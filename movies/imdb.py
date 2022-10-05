@@ -33,17 +33,24 @@ def get_movie_id(title, date=""):
 
 
 def get_movie_details(title, date=""):
-    # Fetching movie id
-    movie_id = get_movie_id(title, date)
-    if movie_id == -1:
-        data = {'Response': 'False'}
-    else:
-        url = "http://www.omdbapi.com/?apikey=" + OMDB_API_SECRET + "&r=json&i=" + movie_id
-        payload = {}
-        headers = {}
+    # # Fetching movie id
+    # movie_id = get_movie_id(title, date)
+    # if movie_id == -1:
+    #     data = {'Response': 'False'}
+    # else:
+    #     url = "http://www.omdbapi.com/?apikey=" + OMDB_API_SECRET + "&r=json&i=" + movie_id
+    #     payload = {}
+    #     headers = {}
+    #
+    #     response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
+    #     data = json.loads(response.text)
 
-        response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
-        data = json.loads(response.text)
+    url = "http://www.omdbapi.com/?apikey=" + OMDB_API_SECRET + "&r=json&t=" + title
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload, proxies=PROXIES)
+    data = json.loads(response.text)
 
     # Handling unidentified movies
     if data['Response'] != 'True':
