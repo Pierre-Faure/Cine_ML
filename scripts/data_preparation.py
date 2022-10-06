@@ -25,7 +25,8 @@ def create_dataset():
         day = f"{row['date_time']:%d}"
 
         # adding movie data
-        row = row.append(select_movie_by_title(row['Film']).drop(columns=['Title']).iloc[0])
+        print(row['Film'].encode('utf8').decode('mbcs').replace("'", "''"))
+        row = row.append(select_movie_by_title(row['Film'].encode('utf8').decode('mbcs').replace("'", "''")).drop(columns=['Title']).iloc[0])
 
         # adding weather data
         row = row.append(daily_weather(year, month, day).iloc[0])
