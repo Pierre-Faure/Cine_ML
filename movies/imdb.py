@@ -2,10 +2,13 @@ import requests
 import json
 import sqlite3
 from movies.secrets import secrets
+from movies.genre_ids import genre_ids
 import sys
+import pandas as pd
 
 IMDB_API_SECRET = secrets.get('IMDB_API_KEY')
 OMDB_API_SECRET = secrets.get('OMDB_API_KEY')
+TMDB_API_SECRET = secrets.get('TMDB_API_KEY')
 PROXIES = secrets.get('proxies')
 
 
@@ -155,3 +158,35 @@ def add_new_movie(title, db_file, date=""):
     except:
         print("[" + title + "]: Movie not added" + str(sys.exc_info()[0]))
         return
+
+def add_missing_data(db_file):
+    conn = sqlite3.connect(str(db_file))
+    cur = conn.cursor()
+    df_missing = pd.read_sql_query("SELECT * FROM movie WHERE Year == -1 OR Released == 'N/A' OR Country == 'N/A' OR Genre == 'N/A'", conn)
+
+    url = "https://api.themoviedb.org/3/search/movie?api_key=74f376e3ed29786242efc526de9fe650&language=fr&query="
+    payload = {}
+    headers = {}
+
+    for idx, row in df_missing.iterrows():
+        response = requests.request("GET", url+row['Title'], headers=headers, data=payload, proxies=PROXIES).json()
+        if response['results']:
+            if row['Year'] == -1:
+                year = response['results'][0]['release_date'].split('-')[0]
+                update_query = "Update movie set Year = "+year+" where Title = "+row['Title']
+                cur.execute(update_query)
+            if row['Released'] == 'N/A':
+                date = response['results'][0]['release_date']
+                update_query = "Update movie set Released = "+date+" where Title = "+row['Title']
+                cur.execute(update_query)
+            if row['Country'] == 'N/A':
+                lang = response['results'][0]['original_language']
+                update_query = "Update movie set Country = "+lang+" where Title = "+row['Title']
+                cur.execute(update_query)
+            if row['Genre'] == 'N/A':
+                genre = ', '.join([next(item for item in genre_ids if item["id"] == x)['name'] for x in response['results'][0]['genre_ids']])
+                update_query = "Update movie set Genre = "+genre+" where Title = "+row['Title']
+                cur.execute(update_query)
+            conn.commit()
+        else:
+            print(row['Title']+" not found")
