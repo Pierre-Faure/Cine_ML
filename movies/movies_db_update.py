@@ -32,4 +32,4 @@ def db_update(input_file, db_file):
 
 
 if __name__ == '__main__':
-    db_update('../data/clean_data.csv', '../data/movies.sqlite')
+    pass#db_update('../data/clean_data.csv', '../data/movies.sqlite')

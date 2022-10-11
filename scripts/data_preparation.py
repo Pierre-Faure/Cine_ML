@@ -5,7 +5,7 @@ from holidays.holiday_data import daily_holidays
 
 input_file = 'data/clean_data.csv'
 output_file = 'data/complete_data/complete_df.csv'
-movies_db_file = 'data/movies.sqlite'
+movies_db_file = 'data/movies.db' #'data/movies.sqlite'
 holidays_data = 'data/holidays/feries_vacances.csv'
 
 
