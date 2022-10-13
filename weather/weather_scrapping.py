@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from movies.secrets import secrets
+import numpy as np
 
 PROXIES = secrets.get('proxies')
 
@@ -44,3 +45,19 @@ def data_scrapping(html_doc, year, month, day):
 
 def daily_weather(year, month, day):
     return data_scrapping(weather_request(year, month, day), year, month, day)
+#
+#
+# def fill_missing_weather_data(df):
+#     df['date_time'] = pd.to_datetime(df['date_time'])
+#     for idx, row in df.iterrows():
+#         year = str(row['date_time'].year)
+#         month = f"{row['date_time']:%m}"
+#         day = f"{row['date_time']:%d}"
+#
+#         if pd.isna(row['Température maximale']):
+#             data = daily_weather(year, month, day)
+#             row['Température maximale', 'Température minimale', 'Vitesse du vent', 'Température du vent', 'Humidité',
+#                 'Visibilité', 'Couverture nuageuse', 'Indice de chaleur', 'Point de rosée', 'Pression',
+#                 'Heure du lever du soleil', 'Heure du coucher du soleil', 'Durée du jour',
+#                 "L'avis de  historique-meteo.net"] = data
+#     return df
