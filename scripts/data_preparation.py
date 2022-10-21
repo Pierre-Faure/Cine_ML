@@ -2,6 +2,8 @@ import pandas as pd
 from movies.movies_db_select import select_movie_by_title
 from weather.weather_scrapping import daily_weather
 from holidays.holiday_data import daily_holidays
+import numpy as np
+from ast import literal_eval
 
 input_file = 'data/clean_data.csv'  # 'data_test/seances.csv'
 output_file = 'data/complete_data/complete_df.csv'
@@ -60,8 +62,18 @@ def create_data_csv(df):
 
 def complete_data_recuperation(file_path):
     df = pd.read_csv(file_path)
+    df['date_time'] = pd.to_datetime(df['date_time'])
 
     df['Nombre entrees'] = df[["Payants", "Gratuits"]].sum(axis=1)
+
+    df['jour_semaine_seance'] = df['date_time'].dt.strftime("%A")
+    df['jour_seance'] = df['date_time'].dt.strftime("%d")
+    df['annee_seance'] = df['date_time'].dt.strftime("%G")
+    df['heure_seance'] = df['date_time'].dt.strftime("%H")
+    df['mois_seance'] = df['date_time'].dt.strftime("%B")
+
+    s = df['Genre'].apply(lambda a: literal_eval(a) if pd.notnull(a) else a).explode()
+    df = df.join(pd.crosstab(s.index, s))
 
     try:
         df['Taux remplissage'] = df['Taux remplissage'].str.rstrip('%').str.replace(',', '.').astype('float')
@@ -84,7 +96,7 @@ def complete_data_recuperation(file_path):
     df["Couverture nuageuse"] = df["Couverture nuageuse"].str.replace('%', '').astype('float')
     df["Pression"] = df["Pression"].str.replace('hPa', '').astype('float')
 
-    df.rename(columns={
+    df = df.rename(columns={
         "Température maximale": "Max_temp",
         "Température minimale": "Min_temp",
         "Vitesse du vent": "Vitesse_vent",
@@ -98,5 +110,12 @@ def complete_data_recuperation(file_path):
         "Durée du jour": "Duree du jour",
         "L'avis de  historique-meteo.net": "Avis_meteo"
     })
+
+    cat_cols = ['Salle', 'Film', 'Version', 'Relief', 'FullTitle', 'Adult', 'Release', 'Language',
+                'Lever_soleil', 'Coucher_soleil',
+                'Duree du jour', 'Avis_meteo', 'nom_vacances', 'jour_semaine_seance', 'jour_seance',
+                'annee_seance', 'heure_seance', 'mois_seance']
+
+    df[cat_cols] = df[cat_cols].astype('category')
 
     return df
